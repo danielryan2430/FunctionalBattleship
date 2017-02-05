@@ -37,9 +37,4 @@ class UserTest extends FlatSpec with Matchers{
     currentUser2 shouldEqual userB
   }
 
-  "addShip" should "add a ship vector" in {
-    val u = generate("u")
-    val (uWithShip, s) = u.addShip(2,0,4,vertical = true)
-    println(uWithShip.activePoints)
-  }
 }

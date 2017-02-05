@@ -12,37 +12,35 @@ class UserSpec extends FlatSpec with Checkers {
   val yRange = Gen.choose(0, 20)
   val sizeRange = Gen.choose(0, 20)
 
-  def userContainsShip(u:User, initialX:Int, initialY:Int, size:Int, vertical:Boolean) = {
-    if(vertical)List.range(initialY, initialY + size).forall(y => u.activePoints.contains(Point(initialX,y)))
-    else List.range(initialX, initialX + size).forall(x => u.activePoints.contains(Point(x,initialY)))
+  def userContainsShip(u: User, initialX: Int, initialY: Int, size: Int, vertical: Boolean) = {
+    if (vertical) List.range(initialY, initialY + size).forall(y => u.activePoints.contains(Point(initialX, y)))
+    else List.range(initialX, initialX + size).forall(x => u.activePoints.contains(Point(x, initialY)))
   }
-
 
 
   PropertyCheckConfig(minSize = 0, maxSize = 20)
   "addShip" should "always be within bounds" in {
-    check((vertical:Boolean) => Prop.forAll(xRange, yRange, sizeRange) {
+    check((vertical: Boolean) => Prop.forAll(xRange, yRange, sizeRange) {
       case (x, y, size) => {
         val initialUser = User("a")
-        val (newUser, response) = initialUser.addShip(x, y, size, vertical)
-
-        def errorGiven: Boolean = {
+        def errorGiven(response: String, newUser: User): Boolean = {
           response == Response.boatPlaceErr && newUser == initialUser
         }
-        println(newUser)
-
         def dimensionsInvalid: Boolean = {
           x < 0 ||
               y < 0 ||
               y + size > BattleShipBoard.length ||
               x > BattleShipBoard.width || size < 1
         }
-        if (dimensionsInvalid)
-          errorGiven
-        else response == Response.boatPlaced && userContainsShip(newUser, x, y, size, vertical)
 
+        initialUser.addShip(x, y, size, vertical) match {
+          case Right((newUser, response)) =>
+            if (dimensionsInvalid) errorGiven(response, newUser)
+            else response == Response.boatPlaced && userContainsShip(newUser, x, y, size, vertical)
+          case Left((newUser, response)) =>
+            response == Response.boatPlaceErr && newUser == initialUser
+        }
       }
-      }
-    )
+    })
   }
 }
