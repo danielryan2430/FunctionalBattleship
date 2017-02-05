@@ -1,4 +1,5 @@
 package com.battleship
+import scala.io.StdIn._
 /**
   * Created by danielimberman on 01/02/17.
   */
@@ -32,6 +33,7 @@ object Battleship {
   }
 
   def getAttack() = {
+    println("attack with coordinates: x y")
     val line = readLine()
     try{
       val coordinates = line.split(" ").map(_.toInt)
@@ -51,9 +53,10 @@ object Battleship {
       val currentAttack = getAttack()
       val (currentAttacker, currentDefender, status) = attacker.attack(currentAttack, defender)
       println(status)
+      println(currentAttacker)
       currentAttacker.printBoard(attacking = true)
       addSpace
-      if(currentDefender.missedPoints.size == 3) println("okay bye!")
+      if(currentDefender.activePoints.isEmpty()) println(s"${attacker.name} wins!")
       else if(status == Response.error)  performTurn(currentAttacker,currentDefender)
       else performTurn(currentDefender,currentAttacker)
 

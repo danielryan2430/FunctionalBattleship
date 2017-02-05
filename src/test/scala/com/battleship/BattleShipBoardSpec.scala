@@ -15,7 +15,7 @@ class BattleShipBoardSpec extends FlatSpec with Checkers{
 
   def fitsRow = (i:Int) => i > 0 && i <= BattleShipBoard.width
 
-  "rowToGrid" should "place in hits wherever specified" in {
+  "rowToGrid" should "place in correct values wherever specified" in {
     check((hits:Set[Int], misses:Set[Int], active:Set[Int]) =>{
       val row = BattleShipBoard.convertStateToString(hits,misses,active).split(" ")
       val validHits = hits.filter(fitsRow)
